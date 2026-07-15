@@ -20,6 +20,7 @@ export default function UploadDocumentPage() {
     setLoading(true);
 
     try {
+      // Upload file first
       const formData = new FormData();
       formData.append("file", file);
 
@@ -35,6 +36,7 @@ export default function UploadDocumentPage() {
         return;
       }
 
+      // Save document record
       const docRes = await fetch("/api/documents", {
         method: "POST",
         headers: {
@@ -56,7 +58,7 @@ export default function UploadDocumentPage() {
         setFarmId("");
         setFile(null);
       } else {
-        alert("Failed to save document");
+        alert("Failed to save document record");
       }
     } catch (error) {
       console.error(error);
