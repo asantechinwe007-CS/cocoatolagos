@@ -8,6 +8,7 @@ const links = [
   { href: "/dashboard/farms", icon: "🌱", label: "Farms" },
   { href: "/dashboard/batches", icon: "📦", label: "Batches" },
   { href: "/dashboard/shipments", icon: "🚚", label: "Shipments" },
+  { href: "/dashboard/users", icon: "👥", label: "Users" },
   { href: "/dashboard/drivers", icon: "👨‍✈️", label: "Drivers" },
   { href: "/dashboard/documents", icon: "📄", label: "Documents" },
   { href: "/dashboard/compliance", icon: "🛡️", label: "Compliance" },
