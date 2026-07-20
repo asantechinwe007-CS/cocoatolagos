@@ -2,6 +2,7 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
+import { useSearchParams } from "next/navigation";
 
 export default function DriverMobilePage() {
   const [shipment, setShipment] = useState<any>(null);
@@ -19,6 +20,14 @@ const [uploadingEvidence, setUploadingEvidence] = useState(false);
 const [receiverName, setReceiverName] = useState("");
 const [deliveryCondition, setDeliveryCondition] = useState("Good");
 const [photoUrl, setPhotoUrl] = useState("");
+
+const searchParams = useSearchParams();
+
+const shipmentFromUrl = searchParams.get("shipment");
+const driverIdFromUrl = searchParams.get("driver");
+
+const [driver, setDriver] = useState<any>(null);
+
 async function completeDelivery() {
   if (!shipment) return;
 
@@ -153,9 +162,10 @@ async function uploadEvidence() {
 
     if (active.length > 0) {
       const selected =
-        active.find(
-          (s: any) => s.id === Number(selectedShipmentId)
-        ) || active[0];
+  active.find(
+    (s: any) =>
+      s.id === Number(shipmentFromUrl || selectedShipmentId)
+  ) || active[0];
 
       setShipment(selected);
       setSelectedShipmentId(selected.id.toString());
@@ -165,10 +175,31 @@ async function uploadEvidence() {
   } catch (err) {
     console.error(err);
   }
-}useEffect(() => {
-  loadShipment();
-}, []);
+}
+async function loadDriver() {
+  if (!driverIdFromUrl) return;
 
+  try {
+    const res = await fetch("/api/drivers");
+    const data = await res.json();
+
+    if (!data.success) return;
+
+    const selectedDriver = data.data.find(
+      (d: any) => d.id === Number(driverIdFromUrl)
+    );
+
+    if (selectedDriver) {
+      setDriver(selectedDriver);
+    }
+  } catch (err) {
+    console.error(err);
+  }
+}
+useEffect(() => {
+  loadShipment();
+  loadDriver();
+}, []);
   async function updateGPS() {
     if (!shipment) return;
 
@@ -259,41 +290,100 @@ async function uploadEvidence() {
     <div className="min-h-screen bg-[#0d1117] flex justify-center py-6 px-4">
       <div className="w-full max-w-[420px] bg-[#0f1720] rounded-3xl shadow-2xl text-white p-5">
 
-        <div className="text-center mb-6">
-          <div className="text-5xl">🚛</div>
-          <h1 className="text-2xl font-bold mt-2">CocoaPass</h1>
-          <p className="text-sm text-gray-400">Driver Mobile Portal</p>
-        </div>
+        <div className="bg-[#161b22] border border-gray-800 rounded-2xl p-5 mb-6">
+
+  <div className="flex items-center justify-between">
+
+    <div>
+      <p className="text-xs uppercase tracking-widest text-amber-500 font-semibold">
+        CocoaPass Logistics
+      </p>
+
+      <h1 className="text-2xl font-bold mt-1">
+        Driver Operations
+      </h1>
+
+      <p className="text-sm text-gray-400 mt-1">
+        {driver
+          ? `Welcome back, ${driver.full_name ?? driver.name}`
+          : "Loading driver profile..."}
+      </p>
+    </div>
+
+    <div className="text-5xl">
+      🚛
+    </div>
+
+  </div>
+
+  <div className="grid grid-cols-2 gap-4 mt-6">
+
+    <div className="bg-[#0d1117] rounded-xl p-3 border border-gray-800">
+      <p className="text-xs text-gray-500 uppercase">
+        Driver
+      </p>
+      <p className="text-red-400 text-sm">
+  Driver ID: {driverIdFromUrl}
+</p>
+
+      <p className="font-semibold mt-1">
+        {driver?.full_name ?? driver?.name ?? "Not Assigned"}
+      </p>
+    </div>
+
+    <div className="bg-[#0d1117] rounded-xl p-3 border border-gray-800">
+      <p className="text-xs text-gray-500 uppercase">
+        Status
+      </p>
+
+      <p className="font-semibold mt-1 text-green-400">
+        {driver?.status ?? "Active"}
+      </p>
+    </div>
+
+    <div className="bg-[#0d1117] rounded-xl p-3 border border-gray-800">
+      <p className="text-xs text-gray-500 uppercase">
+        Vehicle
+      </p>
+
+      <p className="font-semibold mt-1">
+        {shipment?.vehicle_id ??
+          shipment?.vehicle_number ??
+          "Pending Assignment"}
+      </p>
+    </div>
+
+    <div className="bg-[#0d1117] rounded-xl p-3 border border-gray-800">
+      <p className="text-xs text-gray-500 uppercase">
+        Shipment
+      </p>
+
+      <p className="font-semibold mt-1">
+        {shipment?.batch_code ?? "--"}
+      </p>
+    </div>
+
+  </div>
+
+</div>
 
         <div className="bg-[#161b22] rounded-2xl border border-gray-800 p-5 mb-5">
-            <div className="mb-5">
+       <div className="mb-5">
+  <div className="flex items-center justify-between border-b border-gray-800 pb-3">
+    <div>
+      <p className="text-xs uppercase tracking-wide text-gray-500">
+        Current Assignment
+      </p>
 
-  <label className="text-gray-400 text-sm block mb-2">
-    Select Shipment
-  </label>
+      <p className="text-lg font-semibold mt-1">
+        {shipment.batch_code}
+      </p>
+    </div>
 
-  <select
-    value={selectedShipmentId}
-    onChange={(e) => {
-      setSelectedShipmentId(e.target.value);
-
-      const selected = shipments.find(
-        (s) => s.id === Number(e.target.value)
-      );
-
-      if (selected) {
-        setShipment(selected);
-      }
-    }}
-    className="w-full rounded-xl bg-[#0d1117] border border-gray-700 p-3"
-  >
-    {shipments.map((s) => (
-      <option key={s.id} value={s.id}>
-        {s.batch_code} - {s.vehicle_id}
-      </option>
-    ))}
-  </select>
-
+    <span className="bg-green-700 px-3 py-1 rounded-full text-sm">
+      {shipment.status}
+    </span>
+  </div>
 </div>
           <h2 className="text-lg font-bold mb-4">🚚 Assigned Shipment</h2>
 
@@ -451,6 +541,14 @@ async function uploadEvidence() {
     onChange={(e)=>setReceiverName(e.target.value)}
   />
 
+  <input
+    type="url"
+    className="w-full mb-3 rounded-xl bg-[#0d1117] border border-gray-700 p-3"
+    placeholder="Photo URL (optional)"
+    value={photoUrl}
+    onChange={(e) => setPhotoUrl(e.target.value)}
+  />
+
   <select
     className="w-full mb-4 rounded-xl bg-[#0d1117] border border-gray-700 p-3"
     value={deliveryCondition}
@@ -471,7 +569,7 @@ async function uploadEvidence() {
 
 </div>
 
-    </div>
+        </div>
 
       </div>
     </div>
