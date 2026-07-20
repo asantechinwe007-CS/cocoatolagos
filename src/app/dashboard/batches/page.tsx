@@ -2,68 +2,87 @@
 
 import { useEffect, useState } from "react";
 
+import PageHeader from "@/components/PageHeader";
+import StatCard from "@/components/StatCard";
+import BatchForm from "@/components/batch/BatchForm";
+import BatchTable from "@/components/batch/BatchTable";
+
 interface Batch {
   id: number;
   batch_code: string;
   farmer_name: string;
-  weight_kg: string;
+  weight_kg: number;
   quality_grade: string;
+  status: string;
 }
 
-export default function BatchesPage() {
+export default function BatchPage() {
   const [batches, setBatches] = useState<Batch[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  async function loadBatches() {
+    try {
+      const res = await fetch("/api/batches");
+      const data = await res.json();
+
+      if (data.success) {
+        setBatches(data.data);
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  }
 
   useEffect(() => {
     loadBatches();
   }, []);
 
-  async function loadBatches() {
-    const res = await fetch("/api/batches");
-    const data = await res.json();
-
-    if (data.success) {
-      setBatches(data.data);
-    }
-  }
+  const totalWeight = batches.reduce(
+    (sum, batch) => sum + Number(batch.weight_kg),
+    0
+  );
 
   return (
-    <main className="p-6">
-      <h1 className="text-3xl font-bold mb-6">
-        Batch Registry
-      </h1>
+    <div className="p-8 bg-[#0d1117] min-h-screen">
 
-      <table className="w-full border">
-        <thead>
-          <tr>
-            <th className="border p-2">Batch Code</th>
-            <th className="border p-2">Farmer</th>
-            <th className="border p-2">Weight (kg)</th>
-            <th className="border p-2">Grade</th>
-          </tr>
-        </thead>
+      <PageHeader
+        title="Batch Management"
+        subtitle="Register and manage cocoa batches"
+      />
 
-        <tbody>
-          {batches.map((batch) => (
-            <tr key={batch.id}>
-              <td className="border p-2">
-                {batch.batch_code}
-              </td>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <StatCard
+          title="Total Batches"
+          value={batches.length}
+        />
 
-              <td className="border p-2">
-                {batch.farmer_name}
-              </td>
+        <StatCard
+          title="Total Weight (kg)"
+          value={totalWeight.toFixed(2)}
+        />
 
-              <td className="border p-2">
-                {batch.weight_kg}
-              </td>
+        <StatCard
+          title="Harvested"
+          value={
+            batches.filter(
+              (b) => b.status === "Harvested"
+            ).length
+          }
+        />
+      </div>
 
-              <td className="border p-2">
-                {batch.quality_grade}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </main>
+      <BatchForm onCreated={loadBatches} />
+
+      {loading ? (
+        <p className="text-white mt-8">
+          Loading batches...
+        </p>
+      ) : (
+        <BatchTable batches={batches} />
+      )}
+
+    </div>
   );
 }

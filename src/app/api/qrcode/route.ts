@@ -3,36 +3,54 @@ import QRCode from "qrcode";
 
 export async function GET(req: NextRequest) {
   try {
-    const batchCode =
-      req.nextUrl.searchParams.get("batchCode");
+    const { searchParams } = new URL(req.url);
 
-    if (!batchCode) {
+    const batchId = searchParams.get("batchId");
+
+    if (!batchId) {
       return NextResponse.json(
         {
           success: false,
-          message: "Batch code required",
+       message: "batchId is required"
         },
-        { status: 400 }
+        {
+          status: 400,
+        }
       );
     }
-  const url =
-  `http://172.20.10.5:3000/trace/${batchCode}`;
-    const qr = await QRCode.toDataURL(url);
+
+    // Change this when you deploy
+    const baseUrl =
+      process.env.NEXT_PUBLIC_APP_URL ||
+      "http://localhost:3000";
+
+    const passportUrl = `${baseUrl}/passport/${batchId}`;
+
+    const qr = await QRCode.toDataURL(passportUrl, {
+      width: 500,
+      margin: 2,
+      errorCorrectionLevel: "H",
+    });
 
     return NextResponse.json({
       success: true,
-      qr,
-      url,
+      passportUrl,
+      qrCode: qr,
     });
+
   } catch (error) {
+
     console.error(error);
 
     return NextResponse.json(
       {
         success: false,
-        message: "QR generation failed",
+        message: "Unable to generate QR Code",
       },
-      { status: 500 }
+      {
+        status: 500,
+      }
     );
+
   }
 }
