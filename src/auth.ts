@@ -1,9 +1,13 @@
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
+import authConfig from "./auth.config";
+
 import bcrypt from "bcrypt";
 import pool from "@/lib/db";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
+  ...authConfig,
+
   session: {
     strategy: "jwt",
   },
@@ -21,7 +25,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         }
 
         const result = await pool.query(
-          "SELECT * FROM users WHERE email=$1 LIMIT 1",
+          "SELECT * FROM users WHERE email = $1 LIMIT 1",
           [credentials.email]
         );
 
@@ -30,9 +34,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         }
 
         const user = result.rows[0];
+
         if (user.status !== "active") {
-  return null;
-}
+          return null;
+        }
 
         const validPassword = await bcrypt.compare(
           credentials.password as string,
@@ -43,13 +48,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           return null;
         }
 
-       return {
-  id: user.id.toString(),
-  name: user.full_name,
-  email: user.email,
-  role: user.role,
-  status: user.status,
-};
+        return {
+          id: user.id.toString(),
+          name: user.full_name,
+          email: user.email,
+          role: user.role,
+          status: user.status,
+        };
       },
     }),
   ],
@@ -57,22 +62,19 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token.role = (user as any).role;
-        token.status = (user as any).status;
+        (token as any).role = (user as any).role;
+        (token as any).status = (user as any).status;
       }
 
       return token;
     },
 
     async session({ session, token }) {
-      (session.user as any).role = token.role;
-(session.user as any).status = token.status;
+      (session.user as any).role = (token as any).role;
+      (session.user as any).status = (token as any).status;
+
       return session;
     },
-  },
-
-  pages: {
-    signIn: "/login",
   },
 
   secret: process.env.AUTH_SECRET,
