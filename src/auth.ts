@@ -30,6 +30,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         }
 
         const user = result.rows[0];
+        if (user.status !== "active") {
+  return null;
+}
 
         const validPassword = await bcrypt.compare(
           credentials.password as string,
@@ -40,12 +43,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           return null;
         }
 
-        return {
-          id: user.id.toString(),
-          name: user.full_name,
-          email: user.email,
-          role: user.role,
-        };
+       return {
+  id: user.id.toString(),
+  name: user.full_name,
+  email: user.email,
+  role: user.role,
+  status: user.status,
+};
       },
     }),
   ],
@@ -54,6 +58,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     async jwt({ token, user }) {
       if (user) {
         token.role = (user as any).role;
+        token.status = (user as any).status;
       }
 
       return token;
@@ -61,7 +66,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
     async session({ session, token }) {
       (session.user as any).role = token.role;
-
+(session.user as any).status = token.status;
       return session;
     },
   },

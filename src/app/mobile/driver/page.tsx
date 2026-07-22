@@ -1,10 +1,12 @@
-
 "use client";
 
+import { Suspense } from "react";
 import { useEffect, useState, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 
-export default function DriverMobilePage() {
+function DriverMobileContent() {
+
+
   const [shipment, setShipment] = useState<any>(null);
   const [shipments, setShipments] = useState<any[]>([]);
 const [selectedShipmentId, setSelectedShipmentId] = useState("");
@@ -573,5 +575,19 @@ useEffect(() => {
 
       </div>
     </div>
+  );
+}
+
+export default function DriverMobilePage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-[#0d1117] flex items-center justify-center text-white">
+          Loading...
+        </div>
+      }
+    >
+      <DriverMobileContent />
+    </Suspense>
   );
 }

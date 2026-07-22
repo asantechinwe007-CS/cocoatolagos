@@ -38,15 +38,52 @@ export default function LoginPage() {
 
   return (
     <main className="min-h-screen bg-[#0d1117] flex items-center justify-center">
-
       <form
         onSubmit={handleLogin}
         className="bg-[#161b22] p-10 rounded-2xl w-[420px] shadow-2xl"
       >
-
         <h1 className="text-4xl font-black text-green-400 mb-8 text-center">
           CocoaPass Login
         </h1>
+
+        {/* DEV LOGIN */}
+        <div className="mb-6">
+          <p className="text-gray-400 text-sm mb-3 text-center">
+            Developer Login (DEV ONLY)
+          </p>
+
+          <div className="grid grid-cols-3 gap-2">
+            <button
+  type="button"
+  onClick={() => {
+    setEmail("admin@cocoapass.ng");
+    setPassword("cocoapass123");
+  }}
+>
+  Admin
+</button>
+
+           <button
+  type="button"
+  onClick={() => {
+    setEmail("exporterchinwe@cocoapass.ng");
+    setPassword("cocoapass123");
+  }}
+>
+  Exporter
+</button>
+
+           <button
+  type="button"
+  onClick={() => {
+   setEmail("chiagozie@cocoapass.ng");
+    setPassword("cocoapass123");
+  }}
+>
+  Driver
+</button>
+          </div>
+        </div>
 
         <input
           type="email"
@@ -76,7 +113,6 @@ export default function LoginPage() {
         >
           {loading ? "Signing In..." : "Login"}
         </button>
-
       </form>
     </main>
   );
