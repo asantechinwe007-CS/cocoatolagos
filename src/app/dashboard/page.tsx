@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Sidebar from "@/components/Sidebar";
 import DashboardChart from "@/components/DashboardChart";
 
 export default function DashboardPage() {
@@ -39,103 +38,82 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="flex bg-[#0d1117] text-white min-h-screen">
-      <Sidebar />
+    <main className="flex-1">
+      {/* Header */}
+      <div className="border-b border-gray-800 px-10 py-8 flex justify-between items-center">
+        <div>
+          <h1 className="text-5xl font-extrabold text-green-400">
+            🍫 CocoaPass
+          </h1>
 
-      <main className="flex-1">
-
-        {/* Header */}
-        <div className="border-b border-gray-800 px-10 py-8 flex justify-between items-center">
-
-          <div>
-            <h1 className="text-5xl font-extrabold text-green-400">
-              🍫 CocoaPass
-            </h1>
-
-            <p className="text-gray-400 mt-2">
-              Chain Visibility & Traceability Platform
-            </p>
-          </div>
-
-          <div className="bg-green-600 rounded-xl px-6 py-4 shadow-lg">
-            <h2 className="font-bold text-xl">
-              🟢 EUDR READY
-            </h2>
-
-            <p>
-              Compliance Score: {stats.complianceScore}%
-            </p>
-          </div>
-
+          <p className="text-gray-400 mt-2">
+            Chain Visibility & Traceability Platform
+          </p>
         </div>
 
-        {/* KPI Cards */}
+        <div className="bg-green-600 rounded-xl px-6 py-4 shadow-lg">
+          <h2 className="font-bold text-xl">
+            🟢 EUDR READY
+          </h2>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-6 gap-6 p-10">
-
-          <StatCard
-            title="🌱 Farms"
-            value={stats.totalFarms}
-          />
-
-          <StatCard
-            title="📦 Batches"
-            value={stats.totalBatches}
-          />
-
-          <StatCard
-            title="🚚 Shipments"
-            value={stats.totalShipments}
-          />
-
-          <StatCard
-            title="📄 Documents"
-            value={stats.totalDocuments}
-          />
-
-          <StatCard
-            title="⚖ Weight"
-            value={stats.totalWeight}
-          />
-
-          <StatCard
-            title="🟢 Compliance"
-            value={`${stats.complianceScore}%`}
-            green
-          />
-
+          <p>
+            Compliance Score: {stats.complianceScore}%
+          </p>
         </div>
+      </div>
 
-        {/* Bottom Section */}
+      {/* KPI Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-6 gap-6 p-10">
+        <StatCard
+          title="🌱 Farms"
+          value={stats.totalFarms}
+        />
 
-        <div className="grid lg:grid-cols-2 gap-8 px-10 pb-10">
+        <StatCard
+          title="📦 Batches"
+          value={stats.totalBatches}
+        />
 
-          <DashboardChart />
+        <StatCard
+          title="🚚 Shipments"
+          value={stats.totalShipments}
+        />
 
-          <div className="bg-[#161b22] rounded-2xl shadow-xl p-8">
+        <StatCard
+          title="📄 Documents"
+          value={stats.totalDocuments}
+        />
 
-            <h2 className="text-2xl font-bold mb-6">
-              Recent Activity
-            </h2>
+        <StatCard
+          title="⚖ Weight"
+          value={stats.totalWeight}
+        />
 
-            <Activity text="🌱 Farm Registered" />
+        <StatCard
+          title="🟢 Compliance"
+          value={`${stats.complianceScore}%`}
+          green
+        />
+      </div>
 
-            <Activity text="📦 Batch Created" />
+      {/* Bottom Section */}
+      <div className="grid lg:grid-cols-2 gap-8 px-10 pb-10">
+        <DashboardChart />
 
-            <Activity text="🚚 Shipment Registered" />
+        <div className="bg-[#161b22] rounded-2xl shadow-xl p-8">
+          <h2 className="text-2xl font-bold mb-6">
+            Recent Activity
+          </h2>
 
-            <Activity text="📄 Certificate Uploaded" />
-
-            <Activity text="📱 QR Passport Generated" />
-
-            <Activity text="🟢 EUDR Compliance Verified" />
-
-          </div>
-
+          <Activity text="🌱 Farm Registered" />
+          <Activity text="📦 Batch Created" />
+          <Activity text="🚚 Shipment Registered" />
+          <Activity text="📄 Certificate Uploaded" />
+          <Activity text="📱 QR Passport Generated" />
+          <Activity text="🟢 EUDR Compliance Verified" />
         </div>
-
-      </main>
-    </div>
+      </div>
+    </main>
   );
 }
 

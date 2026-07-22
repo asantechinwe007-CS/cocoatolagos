@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -8,10 +9,15 @@ const links = [
   { href: "/dashboard/farms", icon: "🌱", label: "Farms" },
   { href: "/dashboard/batches", icon: "📦", label: "Batches" },
   { href: "/dashboard/shipments", icon: "🚚", label: "Shipments" },
-  { href: "/dashboard/users", icon: "👥", label: "Users" },
-  { href: "/dashboard/drivers", icon: "👨‍✈️", label: "Drivers" },
+  { href: "/dashboard/warehouse", icon: "🏬", label: "Warehouse" },
+  { href: "/dashboard/export", icon: "🚢", label: "Export Lots" },
+  { href: "/dashboard/buyer", icon: "🌍", label: "Buyer Portal" },
+  { href: "/dashboard/passports", icon: "📱", label: "Cocoa Passports" },
   { href: "/dashboard/documents", icon: "📄", label: "Documents" },
   { href: "/dashboard/compliance", icon: "🛡️", label: "Compliance" },
+  { href: "/dashboard/reports", icon: "📈", label: "Reports" },
+  { href: "/dashboard/drivers", icon: "👨‍✈️", label: "Drivers" },
+  { href: "/dashboard/users", icon: "👥", label: "Users" },
   { href: "/dashboard/shipment-map", icon: "🗺️", label: "Live Map" },
 ];
 
@@ -19,23 +25,38 @@ export default function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="w-72 min-h-screen bg-gradient-to-b from-[#0b1220] to-[#111827] border-r border-gray-800 flex flex-col">
+    <aside className="w-72 h-screen sticky top-0 bg-gradient-to-b from-[#0b1220] to-[#111827] border-r border-gray-800 flex flex-col">
 
-      <div className="p-8 border-b border-gray-800">
+      {/* Logo */}
 
-        <div className="text-4xl mb-2 text-center">🍫</div>
+      <div className="border-b border-gray-800 p-6">
 
-        <h1 className="text-3xl font-extrabold text-center text-green-400">
+        <div className="flex justify-center">
+
+          <Image
+            src="/piazza-navona-logo.png"
+            alt="Piazza Navona"
+            width={150}
+            height={150}
+            priority
+            className="object-contain"
+          />
+
+        </div>
+
+        <h1 className="text-center text-3xl font-black text-green-400 mt-4">
           CocoaPass
         </h1>
 
-        <p className="text-center text-gray-400 text-sm mt-2">
-          Chain Visibility Platform
+        <p className="text-center text-xs text-gray-400 mt-2">
+          Powered by Piazza Navona Nigeria Ltd.
         </p>
 
       </div>
 
-      <nav className="flex-1 p-5">
+      {/* Menu */}
+
+      <nav className="flex-1 overflow-y-auto px-4 py-5">
 
         {links.map((link) => {
 
@@ -44,43 +65,46 @@ export default function Sidebar() {
             pathname.startsWith(link.href + "/");
 
           return (
+
             <Link
               key={link.href}
               href={link.href}
-              className={`group flex items-center gap-4 rounded-2xl px-5 py-4 mb-3 transition-all duration-300 ${
+              className={`flex items-center gap-4 rounded-xl px-4 py-3 mb-2 transition-all ${
                 active
-                  ? "bg-green-600 shadow-lg shadow-green-900/40"
+                  ? "bg-green-600 text-white"
                   : "hover:bg-[#1f2937]"
               }`}
             >
+
               <span className="text-2xl">
                 {link.icon}
               </span>
 
-              <span className="font-medium">
+              <span>
                 {link.label}
               </span>
 
-              {active && (
-                <span className="ml-auto w-2 h-2 rounded-full bg-white"></span>
-              )}
             </Link>
+
           );
+
         })}
 
       </nav>
 
-      <div className="p-5 border-t border-gray-800">
+      {/* Footer */}
 
-        <div className="rounded-2xl bg-[#161b22] p-4">
+      <div className="border-t border-gray-800 p-5">
 
-          <div className="text-green-400 font-bold">
-            EUDR READY
-          </div>
+        <div className="rounded-xl bg-[#161b22] p-4">
 
-          <div className="text-gray-400 text-sm mt-1">
-            Farm-to-Export Traceability
-          </div>
+          <p className="text-green-400 font-bold">
+            🟢 EUDR READY
+          </p>
+
+          <p className="text-gray-400 text-sm mt-2">
+            Farm-to-Export Traceability Platform
+          </p>
 
         </div>
 
