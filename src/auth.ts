@@ -24,37 +24,42 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           return null;
         }
 
-        const result = await pool.query(
-          "SELECT * FROM users WHERE email = $1 LIMIT 1",
-          [credentials.email]
-        );
+        try {
+          const result = await pool.query(
+            "SELECT * FROM users WHERE email = $1 LIMIT 1",
+            [credentials.email]
+          );
 
-        if (result.rows.length === 0) {
+          if (result.rows.length === 0) {
+            return null;
+          }
+
+          const user = result.rows[0];
+
+          if (user.status !== "active") {
+            return null;
+          }
+
+          const validPassword = await bcrypt.compare(
+            credentials.password as string,
+            user.password_hash
+          );
+
+          if (!validPassword) {
+            return null;
+          }
+
+          return {
+            id: user.id.toString(),
+            name: user.full_name,
+            email: user.email,
+            role: user.role,
+            status: user.status,
+          };
+        } catch (error) {
+          console.error(error);
           return null;
         }
-
-        const user = result.rows[0];
-
-        if (user.status !== "active") {
-          return null;
-        }
-
-        const validPassword = await bcrypt.compare(
-          credentials.password as string,
-          user.password_hash
-        );
-
-        if (!validPassword) {
-          return null;
-        }
-
-        return {
-          id: user.id.toString(),
-          name: user.full_name,
-          email: user.email,
-          role: user.role,
-          status: user.status,
-        };
       },
     }),
   ],

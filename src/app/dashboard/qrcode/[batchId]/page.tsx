@@ -6,7 +6,7 @@ interface Props {
 
 async function getQR(batchId: string) {
   const res = await fetch(
-    `http://localhost:3000/api/qrcode?batch_id=${batchId}`,
+    `http://localhost:3000/api/qrcode?batchId=${batchId}`,
     {
       cache: "no-store",
     }
@@ -33,9 +33,7 @@ export default async function QRPage({
           Failed to generate QR Code
         </h1>
 
-        <p className="mt-4">
-          {result.message}
-        </p>
+        <p className="mt-4">{result.message}</p>
       </main>
     );
   }
@@ -73,20 +71,13 @@ export default async function QRPage({
           </a>
         </div>
 
-        <div className="flex justify-center gap-4 mt-8">
-          <button
-            onClick={() => window.print()}
-            className="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-lg"
-          >
-            🖨 Print
-          </button>
-
+        <div className="flex justify-center mt-8">
           <a
             href={result.qrCode}
             download={`batch-${batchId}-qr.png`}
             className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg"
           >
-            ⬇ Download
+            ⬇ Download QR Code
           </a>
         </div>
 
