@@ -51,7 +51,7 @@ export default function PassportPage() {
       if (data.success) {
         setPassport(data.data);
       }
-      const qr = await fetch(`/api/qrcode?batch_id=${params.batchCode}`);
+      const qr = await fetch(`/api/qrcode?batchId=${params.batchCode}`);
 const qrData = await qr.json();
 
 if (qrData.success) {
