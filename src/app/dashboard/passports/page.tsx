@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import QRCodeModal from "@/components/QRCodeModal";
 
 import PageHeader from "@/components/PageHeader";
 import StatCard from "@/components/StatCard";
@@ -22,6 +23,15 @@ export default function PassportManagementPage() {
   const [passports, setPassports] = useState<Passport[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+
+  const [showQR, setShowQR] = useState(false);
+
+const [selectedQR, setSelectedQR] = useState({
+  qrCode: "",
+  passportNumber: "",
+  batchCode: "",
+  passportUrl: "",
+});
 
   async function loadPassports() {
     try {
@@ -220,13 +230,32 @@ export default function PassportManagementPage() {
                           👁 View
                         </Link>
 
-                        <Link
-                          href={`/dashboard/qrcode/${passport.batch_id}`}
-                          target="_blank"
-                          className="bg-blue-600 hover:bg-blue-700 px-3 py-2 rounded-lg text-sm font-semibold"
-                        >
-                          📱 QR
-                        </Link>
+<button
+  onClick={async () => {
+    const res = await fetch(
+      `/api/qrcode?batchId=${passport.batch_id}`
+    );
+
+    const data = await res.json();
+
+    if (!data.success) {
+      alert("Unable to generate QR Code");
+      return;
+    }
+
+    setSelectedQR({
+      qrCode: data.qrCode,
+      passportNumber: passport.passport_number,
+      batchCode: passport.batch_code,
+      passportUrl: data.passportUrl,
+    });
+
+    setShowQR(true);
+  }}
+  className="bg-blue-600 hover:bg-blue-700 px-3 py-2 rounded-lg text-sm font-semibold"
+>
+  📱 QR
+</button>
 
                         <button
                           onClick={() => window.print()}
@@ -266,7 +295,17 @@ export default function PassportManagementPage() {
         )}
 
       </div>
+      <QRCodeModal
+  isOpen={showQR}
+  onClose={() => setShowQR(false)}
+  qrCode={selectedQR.qrCode}
+  passportNumber={selectedQR.passportNumber}
+  batchCode={selectedQR.batchCode}
+  passportUrl={selectedQR.passportUrl}
+/>
+      </div>
 
-    </div>
+
+ 
   );
 }

@@ -8,12 +8,16 @@ interface Props {
 async function getTraceData(
   batchCode: string
 ) {
+  const baseUrl =
+  process.env.NEXT_PUBLIC_APP_URL ||
+  "https://cocoapass-ashy.vercel.app";
+
   const res = await fetch(
-    `http://localhost:3000/api/trace?batchCode=${batchCode}`,
-    {
-      cache: "no-store",
-    }
-  );
+  `${baseUrl}/api/trace?batchCode=${batchCode}`,
+  {
+    cache: "no-store",
+  }
+);
 
   return res.json();
 }

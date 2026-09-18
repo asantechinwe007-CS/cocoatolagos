@@ -5,12 +5,16 @@ interface Props {
 }
 
 async function getQR(batchId: string) {
-  const res = await fetch(
-    `http://localhost:3000/api/qrcode?batchId=${batchId}`,
-    {
-      cache: "no-store",
-    }
-  );
+  const baseUrl =
+  process.env.NEXT_PUBLIC_APP_URL ||
+  "https://cocoapass-ashy.vercel.app";
+
+const res = await fetch(
+  `${baseUrl}/api/qrcode?batchId=${batchId}`,
+  {
+    cache: "no-store",
+  }
+);
 
   if (!res.ok) {
     throw new Error("Failed to generate QR code");

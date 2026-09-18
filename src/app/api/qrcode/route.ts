@@ -11,7 +11,7 @@ export async function GET(req: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-       message: "batchId is required"
+          message: "batchId is required",
         },
         {
           status: 400,
@@ -19,14 +19,13 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    // Change this when you deploy
     const baseUrl =
-      process.env.NEXT_PUBLIC_APP_URL ||
-      "http://localhost:3000";
+      process.env.NEXT_PUBLIC_APP_URL ??
+      "https://cocoapass-ashy.vercel.app";
 
     const passportUrl = `${baseUrl}/passport/${batchId}`;
 
-    const qr = await QRCode.toDataURL(passportUrl, {
+    const qrCode = await QRCode.toDataURL(passportUrl, {
       width: 500,
       margin: 2,
       errorCorrectionLevel: "H",
@@ -35,11 +34,9 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({
       success: true,
       passportUrl,
-      qrCode: qr,
+      qrCode,
     });
-
   } catch (error) {
-
     console.error(error);
 
     return NextResponse.json(
@@ -51,6 +48,5 @@ export async function GET(req: NextRequest) {
         status: 500,
       }
     );
-
   }
 }
