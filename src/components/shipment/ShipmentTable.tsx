@@ -217,7 +217,7 @@ export default function ShipmentTable({ shipments }: Props) {
     </Link>
 
     <Link
-      href={`/api/qrcode?batch_id=${shipment.id}`}
+      href={`/api/qrcode?batchId=${shipment.id}`}
       target="_blank"
       className="bg-blue-600 hover:bg-blue-700 px-3 py-2 rounded-lg text-sm font-semibold"
     >
